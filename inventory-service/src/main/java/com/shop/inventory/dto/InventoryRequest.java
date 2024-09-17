@@ -1,9 +1,11 @@
 package com.shop.inventory.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class InventoryDto {
+@Builder
+public class InventoryRequest {
     private String skuCode;
     private Integer quantity;
 }
