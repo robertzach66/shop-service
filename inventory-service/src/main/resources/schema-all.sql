@@ -1,0 +1,8 @@
+DROP TABLE INVENTORIES;
+
+CREATE TABLE INVENTORIES
+(
+    id          serial PRIMARY KEY,
+    SKU_CODE    VARCHAR(100),
+    quantity    INTEGER
+);

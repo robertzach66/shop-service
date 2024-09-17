@@ -1,0 +1,20 @@
+DROP TABLE ORDERS;
+DROP TABLE ORDER_ITEMS;
+
+CREATE TABLE ORDERS
+(
+    id              serial PRIMARY KEY,
+    ORDER_NUMBER    VARCHAR(100)
+);
+
+CREATE TABLE ORDER_ITEMS
+(
+    id          serial PRIMARY KEY,
+    ORDER_ID    integer,
+    SKU_CODE    VARCHAR(100),
+    PRICE       double precision,
+    quantity    INTEGER,
+    CONSTRAINT fk_order FOREIGN KEY (ORDER_ID) REFERENCES ORDERS (id)
+);
+--CREATE SEQUENCE ORDERS_SEQ;
+--CREATE SEQUENCE ORDER_ITEMS_SEQ;
