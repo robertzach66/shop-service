@@ -1,7 +1,6 @@
 package com.shop.order.controller;
 
 import com.shop.order.dto.OrderRequest;
-import com.shop.order.model.Order;
 import com.shop.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
