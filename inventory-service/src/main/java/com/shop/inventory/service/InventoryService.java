@@ -5,23 +5,41 @@ import com.shop.inventory.dto.InventoryResponse;
 import com.shop.inventory.model.Inventory;
 import com.shop.inventory.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
 
     @Transactional(readOnly = true)
     public List<InventoryResponse> getInventory(final List<String> skuCodes) {
-        return inventoryRepository.findBySkuCodes(skuCodes)
+        log.info("Look up {} products in inventory", skuCodes.size());
+
+        // check for the quantities
+        List<InventoryResponse> missingInventories = new ArrayList<>(inventoryRepository.findBySkuCodeIn(skuCodes)
                 .stream()
                 .map(this::mapEntityToDto)
-                .toList();
+                .toList());
+
+        // skuCode existiert nicht
+        if (!missingInventories.isEmpty() && missingInventories.size() < skuCodes.size()) {
+            List<String> foundSkuCodes = missingInventories.stream().map(InventoryResponse::getSkuCode).toList();
+            for (String skuCode : skuCodes) {
+                if (!foundSkuCodes.contains(skuCode)) {
+                    missingInventories.add(new InventoryResponse(skuCode, false));
+                }
+            }
+        }
+
+        return missingInventories;
     }
 
     @Transactional
@@ -33,6 +51,7 @@ public class InventoryService {
     }
 
     private InventoryResponse mapEntityToDto(final Inventory inventory) {
+        log.info("Map Entity to Dto for: {}", inventory.getSkuCode());
         return InventoryResponse.builder()
                 .skuCode(inventory.getSkuCode())
                 .isInStock(inventory.getQuantity() > 0)
