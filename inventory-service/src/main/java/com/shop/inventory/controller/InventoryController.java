@@ -23,10 +23,10 @@ public class InventoryController {
     public ResponseEntity<List<InventoryResponse>> getInventory(@RequestParam("sku-code") List<String> skuCodes) {
         try {
             List<InventoryResponse> inventories = inventoryService.getInventory(skuCodes);
-            if (inventories.isEmpty()) {
+            if (!inventories.isEmpty()) {
                 return new ResponseEntity<>(inventories, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(inventories, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
             }
         } catch (Exception e) {
             log.info("Colud not find Products. Reason: {}", e.getMessage());

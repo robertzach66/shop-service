@@ -24,22 +24,22 @@ public class InventoryService {
         log.info("Look up {} products in inventory", skuCodes.size());
 
         // check for the quantities
-        List<InventoryResponse> missingInventories = new ArrayList<>(inventoryRepository.findBySkuCodeIn(skuCodes)
+        List<InventoryResponse> inventories = new ArrayList<>(inventoryRepository.findBySkuCodeIn(skuCodes)
                 .stream()
                 .map(this::mapEntityToDto)
                 .toList());
 
         // skuCode existiert nicht
-        if (!missingInventories.isEmpty() && missingInventories.size() < skuCodes.size()) {
-            List<String> foundSkuCodes = missingInventories.stream().map(InventoryResponse::getSkuCode).toList();
+        if (!inventories.isEmpty() && inventories.size() < skuCodes.size()) {
+            List<String> foundSkuCodes = inventories.stream().map(InventoryResponse::getSkuCode).toList();
             for (String skuCode : skuCodes) {
                 if (!foundSkuCodes.contains(skuCode)) {
-                    missingInventories.add(new InventoryResponse(skuCode, false));
+                    inventories.add(new InventoryResponse(skuCode, false));
                 }
             }
         }
 
-        return missingInventories;
+        return inventories;
     }
 
     @Transactional

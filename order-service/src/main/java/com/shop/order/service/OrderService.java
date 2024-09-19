@@ -22,7 +22,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     public String createOrder(OrderRequest orderRequest) throws MissingRequestValueException {
         Order order = new Order();
@@ -37,8 +37,8 @@ public class OrderService {
                 .map(OrderItemDto::getSkuCode)
                 .toList();
 
-        InventoryResponse[] inventories = webClient.get()
-                .uri("http://localhost:8082/api/inventory",
+        InventoryResponse[] inventories = webClientBuilder.build().get()
+                .uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("sku-code", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
