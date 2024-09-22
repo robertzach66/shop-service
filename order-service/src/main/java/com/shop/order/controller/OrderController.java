@@ -26,7 +26,7 @@ public class OrderController {
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
 
         try {
-            return new ResponseEntity<>(orderService.createOrder(orderRequest), HttpStatus.CREATED);
+            return new ResponseEntity<>(orderService.placeOrder(orderRequest), HttpStatus.CREATED);
         } catch (IllegalArgumentException | MissingRequestValueException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (WebClientResponseException e) {

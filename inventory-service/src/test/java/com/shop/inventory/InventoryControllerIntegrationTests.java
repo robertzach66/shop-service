@@ -69,7 +69,7 @@ class InventoryControllerIntegrationTests {
     }
 
     @Test
-    @Order(value = 2)
+    @Order(value = 3)
     void shouldFindBySkuCode() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/inventory")
                         .accept(MediaType.APPLICATION_JSON)
@@ -79,6 +79,16 @@ class InventoryControllerIntegrationTests {
                 .andExpect(jsonPath("$[0].id").exists())
                 .andExpect(jsonPath("$[0].skuCode").value("Test-SkuCode"))
                 .andExpect(jsonPath("$[0].quantity").value(200));
+    }
+
+    @Test
+    @Order(value = 4)
+    void shouldBeInStock() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/inventory/instock")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("skuCode", "Test-SkuCode")
+                        .param("quantity", "20"))
+                .andExpect(status().isOk());
     }
 
 }

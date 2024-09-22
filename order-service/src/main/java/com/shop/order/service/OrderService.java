@@ -1,5 +1,6 @@
 package com.shop.order.service;
 
+import com.shop.order.client.InventoryClient;
 import com.shop.order.dto.*;
 import com.shop.order.model.Ordering;
 import com.shop.order.model.OrderItem;
@@ -21,6 +22,19 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
+    private final InventoryClient inventoryClient;
+
+    public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
+        boolean allProductsAreInStock = orderRequest.getOrderItems().stream()
+                .allMatch(
+                        orderItemRequest -> inventoryClient.isInStock(orderItemRequest.getSkuCode(), orderItemRequest.getQuantity())
+                );
+        if (allProductsAreInStock) {
+            return save(orderRequest);
+        } else {
+            throw new IllegalArgumentException("At least one product is not in stock, please try later!");
+        }
+    }
 
     public OrderResponse createOrder(OrderRequest orderRequest) throws MissingRequestValueException {
         List<String> skuCodes = orderRequest.getOrderItems()
@@ -38,16 +52,20 @@ public class OrderService {
         boolean allProductsAreInStock = inventories != null && Arrays.stream(inventories).allMatch(InventoryResponse::isInStock);
 
         if (allProductsAreInStock) {
-            Ordering ordering = new Ordering();
-            ordering.setOrderNumber(UUID.randomUUID().toString());
-            if (orderRequest.getOrderItems() == null || orderRequest.getOrderItems().isEmpty()) {
-                throw new MissingRequestValueException("No OrderItems provided!");
-            }
-            ordering.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemRequest -> mapItemDtoToItemEntity(ordering, orderItemRequest)).toList());
-            return mapEntityToDto(orderRepository.save(ordering));
+            return save(orderRequest);
         } else {
             throw new IllegalArgumentException("Product is not in stock, please try later!");
         }
+    }
+
+    private OrderResponse save(final OrderRequest orderRequest) throws MissingRequestValueException {
+        Ordering ordering = new Ordering();
+        ordering.setOrderNumber(UUID.randomUUID().toString());
+        if (orderRequest.getOrderItems() == null || orderRequest.getOrderItems().isEmpty()) {
+            throw new MissingRequestValueException("No OrderItems provided!");
+        }
+        ordering.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemRequest -> mapItemDtoToItemEntity(ordering, orderItemRequest)).toList());
+        return mapEntityToDto(orderRepository.save(ordering));
     }
 
     private OrderItem mapItemDtoToItemEntity(Ordering ordering, final OrderItemRequest orderItemRequest) {

@@ -34,6 +34,11 @@ public class InventoryController {
         }
     }
 
+    @GetMapping("/instock")
+    public ResponseEntity<Boolean> isInStock(@RequestParam("skuCode") String skuCode, @RequestParam("quantity") Integer quantity) {
+        return new ResponseEntity<>(inventoryService.isInStock(skuCode, quantity), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<InventoryResponse> createInventory(@RequestBody InventoryRequest inventoryDto) {
         try {
