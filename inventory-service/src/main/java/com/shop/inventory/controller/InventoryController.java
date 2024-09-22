@@ -35,12 +35,11 @@ public class InventoryController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createInventory(@RequestBody InventoryRequest inventoryDto) {
+    public ResponseEntity<InventoryResponse> createInventory(@RequestBody InventoryRequest inventoryDto) {
         try {
-            inventoryService.createInventory(inventoryDto);
-            return new ResponseEntity<>(inventoryDto.getQuantity() + " of " + inventoryDto.getSkuCode() + " created sucessfully!", HttpStatus.OK);
+            return new ResponseEntity<>(inventoryService.createInventory(inventoryDto), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Could not create " + inventoryDto.getQuantity() + " of " + inventoryDto.getSkuCode() + "! Reason: " + e.getMessage(), HttpStatus.INSUFFICIENT_STORAGE);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

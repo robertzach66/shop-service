@@ -34,7 +34,7 @@ public class InventoryService {
             List<String> foundSkuCodes = inventories.stream().map(InventoryResponse::getSkuCode).toList();
             for (String skuCode : skuCodes) {
                 if (!foundSkuCodes.contains(skuCode)) {
-                    inventories.add(new InventoryResponse(skuCode, false));
+                    inventories.add(new InventoryResponse(null, skuCode, 0, false));
                 }
             }
         }
@@ -43,17 +43,19 @@ public class InventoryService {
     }
 
     @Transactional
-    public void createInventory(final InventoryRequest inventoryDto) {
+    public InventoryResponse createInventory(final InventoryRequest inventoryDto) {
         Inventory inventory = new Inventory();
         inventory.setSkuCode(inventoryDto.getSkuCode());
         inventory.setQuantity(inventoryDto.getQuantity());
-        inventoryRepository.save(inventory);
+        return mapEntityToDto(inventoryRepository.save(inventory));
     }
 
     private InventoryResponse mapEntityToDto(final Inventory inventory) {
         log.info("Map Entity to Dto for: {}", inventory.getSkuCode());
         return InventoryResponse.builder()
+                .id(inventory.getId())
                 .skuCode(inventory.getSkuCode())
+                .quantity(inventory.getQuantity())
                 .isInStock(inventory.getQuantity() > 0)
                 .build();
     }
