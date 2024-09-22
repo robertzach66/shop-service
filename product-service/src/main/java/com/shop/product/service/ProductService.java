@@ -20,7 +20,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public void createProduct(final ProductRequest productRequest) {
+    public ProductResponse createProduct(final ProductRequest productRequest) {
         Product product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
@@ -29,6 +29,7 @@ public class ProductService {
 
         productRepository.save(product);
         log.info("Product: {}-{} created", product.getName(), product.getId());
+        return mapEntityToDto(product);
     }
 
     public List<ProductResponse> getAllProducts() {
@@ -38,10 +39,10 @@ public class ProductService {
         } catch (Exception e) {
             log.info("No products found");
         }
-        return products.stream().map(this::mapToProductResponse).toList();
+        return products.stream().map(this::mapEntityToDto).toList();
     }
 
-    private ProductResponse mapToProductResponse(final Product product) {
+    private ProductResponse mapEntityToDto(final Product product) {
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())

@@ -19,12 +19,11 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest) {
         try {
-            productService.createProduct(productRequest);
-            return new ResponseEntity<>("Product: " + productRequest.getName() + " created successfully", HttpStatus.CREATED);
+            return new ResponseEntity<>(productService.createProduct(productRequest), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Product: " + productRequest.getName() + " could not be created. Reason: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

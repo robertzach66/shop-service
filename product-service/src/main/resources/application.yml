@@ -3,7 +3,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
 server:
-  port: 0
+  port: 8080
 spring:
   application:
     name: product-service
@@ -12,3 +12,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/shopdb
     username: robert
     password: postgreSQL66
+  jpa:
+    properties:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
