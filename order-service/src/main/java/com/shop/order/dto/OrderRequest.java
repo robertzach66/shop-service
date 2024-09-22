@@ -8,7 +8,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class OrderRequest {
-    private List<OrderItemDto> orderItems;
+    private List<OrderItemRequest> orderItems;
 }

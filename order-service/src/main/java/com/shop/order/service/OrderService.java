@@ -1,9 +1,7 @@
 package com.shop.order.service;
 
-import com.shop.order.dto.InventoryResponse;
-import com.shop.order.dto.OrderItemDto;
-import com.shop.order.dto.OrderRequest;
-import com.shop.order.model.Order;
+import com.shop.order.dto.*;
+import com.shop.order.model.Ordering;
 import com.shop.order.model.OrderItem;
 import com.shop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +22,10 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
 
-    public String createOrder(OrderRequest orderRequest) throws MissingRequestValueException {
-        Order order = new Order();
-        order.setOrderNumber(UUID.randomUUID().toString());
-        if (orderRequest.getOrderItems() == null || orderRequest.getOrderItems().isEmpty()) {
-            throw new MissingRequestValueException("No OrderItems provided!");
-        }
-        order.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemDto -> mapDtoToEntity(order, orderItemDto)).toList());
-
+    public OrderResponse createOrder(OrderRequest orderRequest) throws MissingRequestValueException {
         List<String> skuCodes = orderRequest.getOrderItems()
                 .stream()
-                .map(OrderItemDto::getSkuCode)
+                .map(OrderItemRequest::getSkuCode)
                 .toList();
 
         InventoryResponse[] inventories = webClientBuilder.build().get()
@@ -47,18 +38,43 @@ public class OrderService {
         boolean allProductsAreInStock = inventories != null && Arrays.stream(inventories).allMatch(InventoryResponse::isInStock);
 
         if (allProductsAreInStock) {
-            return orderRepository.save(order).getOrderNumber();
+            Ordering ordering = new Ordering();
+            ordering.setOrderNumber(UUID.randomUUID().toString());
+            if (orderRequest.getOrderItems() == null || orderRequest.getOrderItems().isEmpty()) {
+                throw new MissingRequestValueException("No OrderItems provided!");
+            }
+            ordering.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemRequest -> mapItemDtoToItemEntity(ordering, orderItemRequest)).toList());
+            return mapEntityToDto(orderRepository.save(ordering));
         } else {
             throw new IllegalArgumentException("Product is not in stock, please try later!");
         }
     }
 
-    public OrderItem mapDtoToEntity(Order order, final OrderItemDto orderItemDto) {
+    private OrderItem mapItemDtoToItemEntity(Ordering ordering, final OrderItemRequest orderItemRequest) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setQuantity(orderItemDto.getQuantity());
-        orderItem.setPrice(orderItemDto.getPrice());
-        orderItem.setSkuCode(orderItemDto.getSkuCode());
-        orderItem.setOrder(order);
+        orderItem.setQuantity(orderItemRequest.getQuantity());
+        orderItem.setPrice(orderItemRequest.getPrice());
+        orderItem.setSkuCode(orderItemRequest.getSkuCode());
+        orderItem.setOrdering(ordering);
         return orderItem;
+    }
+
+    private OrderResponse mapEntityToDto(Ordering ordering) {
+        return OrderResponse.builder()
+                .id(ordering.getId())
+                .orderNumber(ordering.getOrderNumber())
+                .orderItems(ordering.getOrderItems().stream()
+                        .map(this::mapItemEntityToItemDto)
+                        .toList())
+                .build();
+    }
+
+    private OrderItemResponse mapItemEntityToItemDto(OrderItem orderItem) {
+        return OrderItemResponse.builder()
+                .id(orderItem.getId())
+                .skuCode(orderItem.getSkuCode())
+                .quantity(orderItem.getQuantity())
+                .price(orderItem.getPrice())
+                .build();
     }
 }

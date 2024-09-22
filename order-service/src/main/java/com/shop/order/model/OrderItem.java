@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Table(name = "ORDER_ITEMS")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
@@ -24,5 +25,5 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Ordering ordering;
 }

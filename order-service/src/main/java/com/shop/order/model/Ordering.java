@@ -7,11 +7,12 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "ORDERS")
-public class Order {
+public class Ordering {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_generator")
     @SequenceGenerator(name = "orders_generator", sequenceName = "ORDERS_ID_SEQ", allocationSize = 1)
@@ -19,6 +20,6 @@ public class Order {
 
     private String orderNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ordering")
     private List<OrderItem> orderItems;
 }
