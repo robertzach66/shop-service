@@ -23,10 +23,28 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest) {
 
         try {
             return new ResponseEntity<>(orderService.placeOrder(orderRequest), HttpStatus.CREATED);
+        } catch (IllegalArgumentException | MissingRequestValueException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (WebClientResponseException e) {
+            if (e.getRequest() != null) {
+                log.error("The following uri could not been answerd successfully:");
+                log.error("URI: {}", e.getRequest().getURI());
+            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+
+        try {
+            return new ResponseEntity<>(orderService.createOrder(orderRequest), HttpStatus.CREATED);
         } catch (IllegalArgumentException | MissingRequestValueException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (WebClientResponseException e) {

@@ -16,3 +16,5 @@ spring:
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+inventory:
+  url: http://localhost:8082

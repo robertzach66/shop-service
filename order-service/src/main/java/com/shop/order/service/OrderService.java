@@ -6,6 +6,7 @@ import com.shop.order.model.Ordering;
 import com.shop.order.model.OrderItem;
 import com.shop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MissingRequestValueException;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -27,7 +29,11 @@ public class OrderService {
     public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
         boolean allProductsAreInStock = orderRequest.getOrderItems().stream()
                 .allMatch(
-                        orderItemRequest -> inventoryClient.isInStock(orderItemRequest.getSkuCode(), orderItemRequest.getQuantity())
+                        orderItemRequest -> {
+                            boolean isInStok = inventoryClient.isInStock(orderItemRequest.getSkuCode(), orderItemRequest.getQuantity());
+                            log.info("{} {} are {}in stock!", orderItemRequest.getQuantity(), orderItemRequest.getSkuCode(), isInStok ? "" : "not ");
+                            return isInStok;
+                        }
                 );
         if (allProductsAreInStock) {
             return save(orderRequest);
