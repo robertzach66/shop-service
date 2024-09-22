@@ -23,6 +23,11 @@ public class InventoryService {
     public List<InventoryResponse> getInventory(final List<String> skuCodes) {
         log.info("Look up {} products in inventory", skuCodes.size());
 
+        // by query db
+        skuCodes.forEach(skuCode -> log.info("{} is {}in stock!",
+                skuCode,
+                inventoryRepository.existsBySkuCodeAndQuantityIsGreaterThanEqual(skuCode, 0) ? "" : "not "));
+
         // check for the quantities
         List<InventoryResponse> inventories = new ArrayList<>(inventoryRepository.findBySkuCodeIn(skuCodes)
                 .stream()

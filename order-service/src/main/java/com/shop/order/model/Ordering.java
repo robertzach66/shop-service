@@ -11,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "ORDERS")
+@Table(name = "ORDERS", schema = "SHOP")
 public class Ordering {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_generator")
-    @SequenceGenerator(name = "orders_generator", sequenceName = "ORDERS_ID_SEQ", allocationSize = 1)
+    @SequenceGenerator(name = "orders_generator", sequenceName = "shop.ORDERS_ID_SEQ", allocationSize = 1)
     private Long id;
 
     private String orderNumber;

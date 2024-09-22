@@ -11,12 +11,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "PRODUCTS")
+@Table(name = "PRODUCTS", schema = "SHOP")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_generator")
-    @SequenceGenerator(name = "product_generator", sequenceName = "products_ID_seq", allocationSize = 1)
+    @SequenceGenerator(name = "product_generator", sequenceName = "shop.products_ID_seq", allocationSize = 1)
     private Long id;
     private String name;
     private String description;

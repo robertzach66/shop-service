@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "INVENTORIES")
+@Table(name = "INVENTORIES", schema = "SHOP")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "inventories_generator")
-    @SequenceGenerator(name = "inventories_generator", sequenceName = "INVENTORIES_ID_SEQ", allocationSize = 1)
+    @SequenceGenerator(name = "inventories_generator", sequenceName = "shop.INVENTORIES_ID_SEQ", allocationSize = 1)
     private Long id;
     private String skuCode;
     private Integer quantity;

@@ -7,7 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "ORDER_ITEMS")
+@Table(name = "ORDER_ITEMS", schema = "SHOP")
 @Getter
 @Setter
 @Builder
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_items_generator")
-    @SequenceGenerator(name = "order_items_generator", sequenceName = "ORDER_ITEMS_ID_SEQ", allocationSize = 1)
+    @SequenceGenerator(name = "order_items_generator", sequenceName = "shop.ORDER_ITEMS_ID_SEQ", allocationSize = 1)
     private Long id;
 
     private String skuCode;

@@ -69,6 +69,7 @@ class InventoryControllerIntegrationTests {
     }
 
     @Test
+    @Order(value = 2)
     void shouldFindBySkuCode() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/inventory")
                         .accept(MediaType.APPLICATION_JSON)
