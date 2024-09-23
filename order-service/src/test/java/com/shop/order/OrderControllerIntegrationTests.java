@@ -37,12 +37,12 @@ public class OrderControllerIntegrationTests extends AbstractPostgresContainerIn
     void shouldPlaceOrder() {
         final OrderRequest orderRequest = OrderRequest.builder().build();
         final OrderItemRequest orderItem1 = OrderItemRequest.builder()
-                .skuCode("Test-Skucode-1")
+                .skuCode("TestSkucode1")
                 .price(new BigDecimal(111))
                 .quantity(5)
                 .build();
         final OrderItemRequest orderItem2 = OrderItemRequest.builder()
-                .skuCode("Test-Skucode-2")
+                .skuCode("TestSkucode2")
                 .price(new BigDecimal(222))
                 .quantity(2)
                 .build();
