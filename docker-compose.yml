@@ -1,7 +1,9 @@
 services:
   db:
+    container_name: postgres-shopdb
     image: postgres:alpine
     environment:
+      - POSTGRES_DB=shopdb
       - POSTGRES_USER=robert
       - POSTGRES_PASSWORD=postgreSQL66
     ports:
