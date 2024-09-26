@@ -23,7 +23,6 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final WebClient.Builder webClientBuilder;
     private final InventoryClient inventoryClient;
 
     public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
@@ -48,14 +47,8 @@ public class OrderService {
                 .map(OrderItemRequest::getSkuCode)
                 .toList();
 
-        InventoryResponse[] inventories = webClientBuilder.build().get()
-                .uri("http://inventory-service/api/inventory",
-                        uriBuilder -> uriBuilder.queryParam("sku-code", skuCodes).build())
-                .retrieve()
-                .bodyToMono(InventoryResponse[].class)
-                .block();
-
-        boolean allProductsAreInStock = inventories != null && Arrays.stream(inventories).allMatch(InventoryResponse::isInStock);
+        List<InventoryResponse> inventories = inventoryClient.getInventory(skuCodes);
+        boolean allProductsAreInStock = inventories != null && inventories.stream().allMatch(InventoryResponse::isInStock);
 
         if (allProductsAreInStock) {
             return save(orderRequest);
