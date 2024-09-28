@@ -1,5 +1,11 @@
 server:
   port: 9000
+  url: http://localhost
+
+service-ports:
+  product-service-port: 8080
+  order-service-port: 8081
+  inventory-service-port: 8082
 
 spring:
   application:
@@ -27,11 +33,11 @@ springdoc:
 management:
   endpoint:
     health:
-      show-details: true
+      show-details: always
   endpoints:
     web:
       exposure:
-        include: *
+        include: "*"
   health:
     circuitbreakers:
       enabled: true
