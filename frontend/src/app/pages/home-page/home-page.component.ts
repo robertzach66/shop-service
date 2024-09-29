@@ -6,6 +6,8 @@ import { OrderService } from '../../services/order/order.service';
 import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../model/product';
 import { Router } from '@angular/router';
+import { Order } from '../../model/order';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-homepage',
@@ -34,7 +36,9 @@ export class HomePageComponent implements OnInit {
         this.productService
           .getProducts()
           .pipe()
-          .subscribe(products => this.products)
+          .subscribe(products => {
+            this.products = products;
+          })
       }
     )
   }
@@ -47,8 +51,29 @@ export class HomePageComponent implements OnInit {
 
     this.oidcSecurityService.userData$.subscribe( result => {
       console.log(result);
-      
+      const userDetails = {
+        email: result.userData.email;
+        firstName: result.userData.given_name;
+        lastName: result.userData.family_name;
+      }
+
+      if (!quantity) {
+        this.orderFailed = true;
+        this.orderSucces = false;
+        this.quantityIsNull = true;
+      } else {
+        const order: Order = {
+          skuCode: product.skuCode,
+          price: product.price,
+          quantity: Number(quantity),
+          userDetails: userDetails,
+        }
+
+        this.orderService.orderProduct(order).subscribe({
+            next: () => {this.orderSucces = true;}, 
+            error: (e) => {this.orderFailed = true;}
+          });
+      }
     });
   }
-
 }

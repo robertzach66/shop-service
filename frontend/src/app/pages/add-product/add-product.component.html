@@ -1,0 +1,11 @@
+<div class="container mx-4 p-4">
+    <h2 class="text-2xl font-bold mb-4">Add Product</h2>
+    @if (productCreated) {
+        <h4 class="text-green-500">Product Created Successfully</h4>
+    }
+    <form [formGroup]="addProductForm" (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+            
+        </div>
+    </form>
+</div>
