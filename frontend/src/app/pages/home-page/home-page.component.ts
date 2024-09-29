@@ -2,8 +2,8 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { OrderService } from '../../services/order.service';
-import { ProductService } from '../../services/product.service';
+import { OrderService } from '../../services/order/order.service';
+import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../model/product';
 import { Router } from '@angular/router';
 
@@ -41,6 +41,14 @@ export class HomePageComponent implements OnInit {
 
   goToCreateProductPage() {
     this.router.navigateByUrl('/add-product');
+  }
+
+  orderProduct(product: Product, quantity: string) {
+
+    this.oidcSecurityService.userData$.subscribe( result => {
+      console.log(result);
+      
+    });
   }
 
 }
