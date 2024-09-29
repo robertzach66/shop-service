@@ -52,9 +52,9 @@ export class HomePageComponent implements OnInit {
     this.oidcSecurityService.userData$.subscribe( result => {
       console.log(result);
       const userDetails = {
-        email: result.userData.email;
-        firstName: result.userData.given_name;
-        lastName: result.userData.family_name;
+        email: result.userData.email,
+        firstName: result.userData.given_name,
+        lastName: result.userData.family_name,
       }
 
       if (!quantity) {
