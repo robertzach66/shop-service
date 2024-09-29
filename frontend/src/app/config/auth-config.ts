@@ -1,10 +1,10 @@
-import {} from 'angular-auth-oicd-client';
+import { PassedInitialConfig } from 'angular-auth-oidc-client';
 
-export const authConfig: OPassedInitialConfig = {
+export const authConfig: PassedInitialConfig = {
     config: {
         authority: "http://localhost:8181/realms/shop-security-realm/protocol/openid-connect/token",
         redirectUrl: window.location.origin,
-        postLogoutRedirectUrl: window.location.origin,
+        postLogoutRedirectUri: window.location.origin,
         clientId: 'shop-client',
         scope: 'openid profile offline_access',
         responseType: 'code',
