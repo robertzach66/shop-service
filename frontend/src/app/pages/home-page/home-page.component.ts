@@ -24,7 +24,6 @@ export class HomePageComponent implements OnInit {
 
   isAuthenticated = false;
   orderSucces = false;
-  orderFailed = false;
   quantityIsNull = false;
 
   products: Array<Product> = [];
@@ -58,10 +57,10 @@ export class HomePageComponent implements OnInit {
       }
 
       if (!quantity) {
-        this.orderFailed = true;
         this.orderSucces = false;
         this.quantityIsNull = true;
       } else {
+        this.quantityIsNull = false;
         const order: Order = {
           skuCode: product.skuCode,
           price: product.price,
@@ -71,7 +70,7 @@ export class HomePageComponent implements OnInit {
 
         this.orderService.orderProduct(order).subscribe({
             next: () => {this.orderSucces = true;}, 
-            error: (e) => {this.orderFailed = true;}
+            error: (e) => {this.orderSucces = false;}
           });
       }
     });
