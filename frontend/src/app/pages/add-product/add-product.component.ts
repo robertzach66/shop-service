@@ -2,6 +2,7 @@ import { NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService } from '../../services/product/product.service';
+import { Product } from '../../model/product';
 
 @Component({
   selector: 'app-add-product',
@@ -25,7 +26,20 @@ export class AddProductComponent {
   }
 
   onSubmit(): void {
-    
+    if (this.addProductForm.valid) {
+      const product: Product = {
+        skuCode: this.skuCode?.value,
+        name: this.name?.value,
+        description: this.description?.value,
+        price: this.price?.value,
+      }
+      this.productService.createProduct(product).subscribe(p => {
+        this.productCreated = true;
+        this.addProductForm.reset();
+      });
+    } else {
+      console.log('Form is not valid');
+    }
   }
 
   get skuCode() {
