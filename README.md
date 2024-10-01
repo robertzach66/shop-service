@@ -1,1 +1,1 @@
-Tutorial for Microservices with Spring Boot, Eureka, WebClient Kafka, and more
+Tutorial for Microservices with Spring Boot, Angular, RestClient, Kafka, PostgreSQL, Docker, Kubernetes
