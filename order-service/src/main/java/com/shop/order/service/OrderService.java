@@ -57,6 +57,10 @@ public class OrderService {
         }
     }
 
+    public OrderResponse getOrder(final String orderNumber) {
+        return mapEntityToDto(orderRepository.findByOrderNumber(orderNumber));
+    }
+
     private OrderResponse save(final OrderRequest orderRequest) throws MissingRequestValueException {
         Ordering ordering = new Ordering();
         ordering.setOrderNumber(UUID.randomUUID().toString());
