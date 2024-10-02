@@ -68,7 +68,6 @@ export class HomePageComponent implements OnInit {
           quantity: Number(quantity),
         }
 
-
         const order: Order = {
           orderItems: [orderItem],
           userDetails: userDetails,

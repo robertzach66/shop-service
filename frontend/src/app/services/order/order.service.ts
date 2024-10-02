@@ -10,13 +10,7 @@ export class OrderService {
 
   constructor(private httpClient: HttpClient) { }
 
-  orderProduct(order: Order): Observable<string> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      }),
-      responsType: 'text' as 'json'
-    }
-    return this.httpClient.post<string>("http://localhost:9000/api/order", order, httpOptions);
+  orderProduct(order: Order): Observable<Order> {
+    return this.httpClient.post<Order>("http://localhost:9000/api/order", order);
   }
 }
