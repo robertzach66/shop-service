@@ -6,7 +6,7 @@ import { OrderService } from '../../services/order/order.service';
 import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../model/product';
 import { Router } from '@angular/router';
-import { Order } from '../../model/order';
+import { Order, OrderItem } from '../../model/order';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -61,10 +61,16 @@ export class HomePageComponent implements OnInit {
         this.quantityIsNull = true;
       } else {
         this.quantityIsNull = false;
-        const order: Order = {
+
+        const orderItem: OrderItem = {
           skuCode: product.skuCode,
           price: product.price,
           quantity: Number(quantity),
+        }
+
+
+        const order: Order = {
+          orderItems: [orderItem],
           userDetails: userDetails,
         }
 

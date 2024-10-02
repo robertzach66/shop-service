@@ -1,10 +1,15 @@
 export interface Order {
     id?: string;
     orderNumber?: string;
+    orderItems: Array<OrderItem>;
+    userDetails: UserDetails;
+}
+
+export interface OrderItem {
+    id?: string
     skuCode: string;
     price: number;
     quantity: number;
-    userDetails: UserDetails;
 }
 
 export interface UserDetails {
