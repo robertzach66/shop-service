@@ -26,6 +26,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> productServiceRoute() {
+        log.info(routingConfig.getProductRoutes().getName());
         return GatewayRouterFunctions.route(routingConfig.getProductRoutes().getName())
                 .route(RequestPredicates.path(routingConfig.getProductRoutes().getPath()),
                         HandlerFunctions.http(routingConfig.getProductRoutes().getUrl()))
@@ -36,6 +37,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> productServiceSwaggerRoute() {
+        log.info(routingConfig.getProductRoutes().getSwagger().getName());
         return GatewayRouterFunctions.route(routingConfig.getProductRoutes().getSwagger().getName())
                 .route(RequestPredicates.path(routingConfig.getProductRoutes().getSwagger().getPath()),
                         HandlerFunctions.http(routingConfig.getProductRoutes().getUrl()))
@@ -47,6 +49,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> orderServiceRoute() {
+        log.info(routingConfig.getOrderRoutes().getName());
         return GatewayRouterFunctions.route(routingConfig.getOrderRoutes().getName())
                 .route(RequestPredicates.POST(routingConfig.getOrderRoutes().getPath()),
                         HandlerFunctions.http(routingConfig.getOrderRoutes().getUrl()))
@@ -57,6 +60,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> orderServiceSwaggerRoute() {
+        log.info(routingConfig.getOrderRoutes().getSwagger().getName());
         return GatewayRouterFunctions.route(routingConfig.getOrderRoutes().getSwagger().getName())
                 .route(RequestPredicates.path(routingConfig.getOrderRoutes().getSwagger().getPath()),
                         HandlerFunctions.http(routingConfig.getOrderRoutes().getUrl()))
@@ -68,6 +72,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> inventoryServiceRoute() {
+        log.info(routingConfig.getInventoryRoutes().getName());
         return GatewayRouterFunctions.route(routingConfig.getInventoryRoutes().getName())
                 .route(RequestPredicates.path(routingConfig.getInventoryRoutes().getPath()),
                         HandlerFunctions.http(routingConfig.getInventoryRoutes().getUrl()))
@@ -78,6 +83,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> inventoryServiceSwaggerRoute() {
+        log.info(routingConfig.getInventoryRoutes().getSwagger().getName());
         return GatewayRouterFunctions.route(routingConfig.getInventoryRoutes().getSwagger().getName())
                 .route(RequestPredicates.path(routingConfig.getInventoryRoutes().getSwagger().getPath()),
                         HandlerFunctions.http(routingConfig.getInventoryRoutes().getUrl()))
@@ -89,6 +95,7 @@ public class Routes {
 
     @Bean
     public RouterFunction<ServerResponse> fallbackRoute() {
+        log.info(routingConfig.getFallbackRoutes().getName());
         return GatewayRouterFunctions.route(routingConfig.getFallbackRoutes().getName())
                 .GET(routingConfig.getFallbackRoutes().getPath(), request -> ServerResponse
                         .status(HttpStatus.SERVICE_UNAVAILABLE)

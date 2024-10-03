@@ -35,9 +35,8 @@ export class HomePageComponent implements OnInit {
         this.isAuthenticated = isAuthenticated;
         this.productService
           .getProducts()
-          .pipe()
           .subscribe(products => {
-            this.products = products;
+            console.log(products);
           })
       }
     )
