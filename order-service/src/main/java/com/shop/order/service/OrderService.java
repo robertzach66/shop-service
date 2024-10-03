@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -64,6 +65,7 @@ public class OrderService {
     private OrderResponse save(final OrderRequest orderRequest) throws MissingRequestValueException {
         Ordering ordering = new Ordering();
         ordering.setOrderNumber(UUID.randomUUID().toString());
+        ordering.setOrderDate(LocalDate.now());
         if (orderRequest.getOrderItems() == null || orderRequest.getOrderItems().isEmpty()) {
             throw new MissingRequestValueException("No OrderItems provided!");
         }

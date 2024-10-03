@@ -3,6 +3,7 @@ package com.shop.order.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -19,6 +20,7 @@ public class Ordering {
     private Long id;
 
     private String orderNumber;
+    private LocalDate orderDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ordering")
     private List<OrderItem> orderItems;
