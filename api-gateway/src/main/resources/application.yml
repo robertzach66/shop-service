@@ -1,11 +1,36 @@
 server:
   port: 9000
-  url: http://localhost
 
-service-ports:
-  product-service-port: 8080
-  order-service-port: 8081
-  inventory-service-port: 8082
+routing:
+  docs-path: /api-docs
+  routes:
+    - name: product_service
+      url: http://localhost:8080
+      path: /api/product
+      circuit-breaker: productServiceCircuitBreaker
+      swagger:
+        name: product_service_swagger
+        path: /aggregate/product-service/v3/api-docs
+        circuit-breaker: productServiceSwaggerCircuitBreaker
+    - name: order_service
+      url: http://localhost:8081
+      path: /api/order
+      circuit-breaker: orderServiceCircuitBreaker
+      swagger:
+        name: order_service_swagger
+        path: /aggregate/order-service/v3/api-docs
+        circuit-breaker: orderServiceSwaggerCircuitBreaker
+    - name: inventory_service
+      url: http://localhost:8082
+      path: /api/inventory
+      circuit-breaker: inventoryServiceCircuitBreaker
+      swagger:
+        name: inventory_service_swagger
+        path: /aggregate/inventory-service/v3/api-docs
+        circuit-breaker: inventoryServiceSwaggerCircuitBreaker
+    - name: fallbackRoute
+      url: forward:/fallbackRoute
+      path: /fallbackRoute
 
 spring:
   application:
