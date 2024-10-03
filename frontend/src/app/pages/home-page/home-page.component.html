@@ -45,7 +45,7 @@
                 @for (order of orders; track order.id) {
                     <li class="mb-2 p-4 bg-gray-100 rounded-lg shadow-sm flex justify-between items-center">
                         <div>
-                            <span class="font-semibold">{{ order.orderNumber }}</span> - <span class="text-gray-600">Order-Date: {{order.orderDate}}</span>
+                            <span class="font-semibold">Order-Number: {{ order.orderNumber }}</span> - <span class="text-gray-600">Order-Date: {{order.orderDate}}</span>
                         </div>
                     </li>
                 }
