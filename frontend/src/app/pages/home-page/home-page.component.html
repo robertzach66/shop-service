@@ -39,5 +39,24 @@
             <p class="text-red-500 font-semibold">No products found!</p>
         }
     </div>
+    <div class="p-4">
+        @if (orders.length > 0) {
+            <ul class="list-disc list-inside">
+                @for (order of orders; track order.id) {
+                    <li class="mb-2 p-4 bg-gray-100 rounded-lg shadow-sm flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold">{{ order.orderNumber }}</span> - <span class="text-gray-600">Order-Date: {{order.orderDate}}</span>
+                        </div>
+                    </li>
+                }
+            </ul>
+        } @else if (orders.length === 100) {
+            <span class="text-gray-700 text-sm">
+                Click <a class="text-blue-500 hover:underline-cursor-pointer">Load more</a> to see mor products
+            </span>
+        } @else {
+            <p class="text-red-500 font-semibold">No orders found!</p>
+        }
+    </div>
 </main>
 

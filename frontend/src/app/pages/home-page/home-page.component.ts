@@ -27,6 +27,7 @@ export class HomePageComponent implements OnInit {
   quantityIsNull = false;
 
   products: Array<Product> = [];
+  orders: Array<Order> = [];
 
   ngOnInit(): void {
     this.oidcSecurityService.isAuthenticated$.subscribe(
@@ -74,7 +75,10 @@ export class HomePageComponent implements OnInit {
         }
 
         this.orderService.orderProduct(order).subscribe({
-            next: () => {this.orderSucces = true;}, 
+            next: (order) => {
+              this.orderSucces = true;
+              this.orders.push(order);
+            }, 
             error: (e) => {this.orderSucces = false;}
           });
       }
