@@ -18,10 +18,10 @@ export class AddProductComponent {
 
   constructor(private fb: FormBuilder) {
     this.addProductForm = this.fb.group({
-      skuCode: ['', Validators.required],
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      price: [0, Validators.required],
+      skuCode: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      price: [0, [Validators.required]],
     })
   }
 
