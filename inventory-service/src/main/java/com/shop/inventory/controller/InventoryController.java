@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
+@CrossOrigin(origins = "http://localhost:8081, http://localhost:9000")
 @RequiredArgsConstructor
 @Slf4j
 public class InventoryController {

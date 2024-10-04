@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 @RestController
 @RequestMapping("api/order")
+@CrossOrigin(origins = "http://localhost:9000")
 @RequiredArgsConstructor
 @Slf4j
 public class OrderController {
