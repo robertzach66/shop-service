@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 @RestController
 @RequestMapping("api/order")
-@CrossOrigin(origins = "http://localhost:9000")
 @RequiredArgsConstructor
 @Slf4j
 public class OrderController {
@@ -24,7 +23,10 @@ public class OrderController {
     public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest) {
 
         try {
-            return new ResponseEntity<>(orderService.placeOrder(orderRequest), HttpStatus.CREATED);
+            log.info("Start to place order: {}", orderRequest);
+            final OrderResponse orderResponse = orderService.placeOrder(orderRequest);
+            log.info("Order: {} placed successfully!", orderResponse);
+            return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
         } catch (IllegalArgumentException | MissingRequestValueException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (WebClientResponseException e) {
@@ -58,6 +60,9 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<OrderResponse> getOrder(@RequestParam("order-number") String orderNumber) {
-        return new ResponseEntity<>(orderService.getOrder(orderNumber), HttpStatus.CREATED);
+        log.info("Start to get order: {}", orderNumber);
+        OrderResponse orderResponse = orderService.getOrder(orderNumber);
+        log.info("Found Order: {}!", orderResponse);
+        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 }

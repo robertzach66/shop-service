@@ -24,6 +24,7 @@ export class HomePageComponent implements OnInit {
 
   isAuthenticated = false;
   orderSucces = false;
+  orderFailed = false;
   quantityIsNull = false;
 
   products: Array<Product> = [];
@@ -59,6 +60,7 @@ export class HomePageComponent implements OnInit {
 
       if (!quantity) {
         this.orderSucces = false;
+        this.orderFailed = false;
         this.quantityIsNull = true;
       } else {
         this.quantityIsNull = false;
@@ -77,9 +79,13 @@ export class HomePageComponent implements OnInit {
         this.orderService.orderProduct(order).subscribe({
             next: (order) => {
               this.orderSucces = true;
+              this.orderFailed = false;
               this.orders.push(order);
             }, 
-            error: (e) => {this.orderSucces = false;}
+            error: (e) => {
+              this.orderSucces = false;
+              this.orderFailed = true;
+            }
           });
       }
     });

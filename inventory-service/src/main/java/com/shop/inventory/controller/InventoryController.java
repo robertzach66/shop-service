@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
-@CrossOrigin(origins = "http://localhost:8081, http://localhost:9000")
 @RequiredArgsConstructor
 @Slf4j
 public class InventoryController {
@@ -37,7 +36,10 @@ public class InventoryController {
 
     @GetMapping("/instock")
     public ResponseEntity<Boolean> isInStock(@RequestParam("skuCode") String skuCode, @RequestParam("quantity") Integer quantity) {
-        return new ResponseEntity<>(inventoryService.isInStock(skuCode, quantity), HttpStatus.OK);
+        log.info("Start to check, if Product of sku-code: {} has more or equal quantiies: {}", skuCode, quantity);
+        Boolean isInStock = inventoryService.isInStock(skuCode, quantity);
+        log.info("Product of sku-code: {} has{} more or equal quantiies: {}", skuCode, (isInStock ? "" : " not"),quantity);
+        return new ResponseEntity<>(isInStock, HttpStatus.OK);
     }
 
     @PostMapping

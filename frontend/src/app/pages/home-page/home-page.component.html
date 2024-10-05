@@ -11,8 +11,8 @@
         @if (products.length > 0) {
             @if (orderSucces) {
                 <h4 class="text-green-500 font-bold">Order Placed successfully</h4>
-            } @else {
-                <h4 class="text-reed-500 font-bold">Order failed, please try again later</h4>
+            } @else if (orderFailed) {
+                <h4 class="text-red-500 font-bold">Order failed, please try again later</h4>
                 @if (quantityIsNull) {
                     <h4 class="text-reed-500 font-bold">Quantity cannot be null</h4>
                 }

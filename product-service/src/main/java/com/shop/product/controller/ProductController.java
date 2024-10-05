@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductController {
@@ -25,7 +24,7 @@ public class ProductController {
     public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest) {
         try {
             log.info("Start to create product: {}", productRequest);
-            ProductResponse productResponse = productService.createProduct(productRequest);
+            final ProductResponse productResponse = productService.createProduct(productRequest);
             log.info("Product: {} created successfully!", productResponse);
             return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
         } catch (Exception e) {
