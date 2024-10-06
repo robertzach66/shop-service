@@ -1,8 +1,8 @@
 package com.shop.order;
 
-import com.shop.order.dto.OrderItemRequest;
-import com.shop.order.dto.OrderRequest;
-import com.shop.order.dto.OrderResponse;
+import com.shop.order.dto.CustomerDto;
+import com.shop.order.dto.OrderDto;
+import com.shop.order.dto.OrderItemDto;
 import com.shop.order.stub.InventoryClientStup;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -35,83 +35,59 @@ public class OrderControllerIntegrationTests extends AbstractPostgresContainerIn
     @Test
     @Order(value = 2)
     void shouldPlaceOrder() {
-        final OrderRequest orderRequest = OrderRequest.builder().build();
-        final OrderItemRequest orderItem1 = OrderItemRequest.builder()
-                .skuCode("TestSkucode1")
-                .price(new BigDecimal(111))
-                .quantity(5)
-                .build();
-        final OrderItemRequest orderItem2 = OrderItemRequest.builder()
-                .skuCode("TestSkucode2")
-                .price(new BigDecimal(222))
-                .quantity(2)
-                .build();
+        final OrderItemDto orderItem1 = new OrderItemDto(null, "TestSkucode1", new BigDecimal(111), 5);
+        final OrderItemDto orderItem2 = new OrderItemDto(null, "TestSkucode2", new BigDecimal(222), 2);
+        final CustomerDto customerDto = new CustomerDto(null, null, "Robert", "Zach", "robert.zach@live.de");
+        final OrderDto orderRequest = new OrderDto(null, null, null, List.of(orderItem1, orderItem2), customerDto);
 
-        final List<OrderItemRequest> orderItems = new ArrayList<>();
-        orderItems.add(orderItem1);
-        orderItems.add(orderItem2);
-        orderRequest.setOrderItems(orderItems);
+        InventoryClientStup.stubInventoryCall(orderItem1.skuCode(), orderItem1.quantity());
+        InventoryClientStup.stubInventoryCall(orderItem2.skuCode(), orderItem2.quantity());
 
-        InventoryClientStup.stubInventoryCall(orderItem1.getSkuCode(), orderItem1.getQuantity());
-        InventoryClientStup.stubInventoryCall(orderItem2.getSkuCode(), orderItem2.getQuantity());
-
-        EntityExchangeResult<OrderResponse> result = webTestClient.post()
+        EntityExchangeResult<OrderDto> result = webTestClient.post()
                 .uri("/api/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(Mono.just(orderRequest), OrderRequest.class)
+                .body(Mono.just(orderRequest), OrderDto.class)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody(OrderResponse.class)
+                .expectBody(OrderDto.class)
                 .returnResult();
 
-        OrderResponse orderResponse = result.getResponseBody();
+        OrderDto orderResponse = result.getResponseBody();
         Assertions.assertNotNull(orderResponse);
-        Assertions.assertNotNull(orderResponse.getId());
-        Assertions.assertNotNull(orderResponse.getOrderNumber());
-        Assertions.assertEquals(2, orderResponse.getOrderItems().size());
-        Assertions.assertNotNull(orderResponse.getOrderItems().get(0).getId());
-        Assertions.assertNotNull(orderResponse.getOrderItems().get(1).getId());
+        Assertions.assertNotNull(orderResponse.id());
+        Assertions.assertNotNull(orderResponse.orderNumber());
+        Assertions.assertEquals(2, orderResponse.orderItems().size());
+        Assertions.assertNotNull(orderResponse.orderItems().get(0).id());
+        Assertions.assertNotNull(orderResponse.orderItems().get(1).id());
     }
 
     @Test
     @Order(value = 3)
     void shouldCreateOrder() {
-        final OrderRequest orderRequest = OrderRequest.builder().build();
-        final OrderItemRequest orderItem1 = OrderItemRequest.builder()
-                .skuCode("Mercedes Benz EQE")
-                .price(new BigDecimal(111))
-                .quantity(5)
-                .build();
-        final OrderItemRequest orderItem2 = OrderItemRequest.builder()
-                .skuCode("Audi Quattro")
-                .price(new BigDecimal(222))
-                .quantity(2)
-                .build();
+        final OrderItemDto orderItem1 = new OrderItemDto(null, "Mercedes Benz EQE", new BigDecimal(111), 5);
+        final OrderItemDto orderItem2 = new OrderItemDto(null, "Audi Quattro", new BigDecimal(222), 2);
+        final CustomerDto customerDto = new CustomerDto(null, null, "Robert", "Zach", "robert.zach@live.de");
+        final OrderDto orderRequest = new OrderDto(null, null, null, List.of(orderItem1, orderItem2), customerDto);
 
-        final List<OrderItemRequest> orderItems = new ArrayList<>();
-        orderItems.add(orderItem1);
-        orderItems.add(orderItem2);
-        orderRequest.setOrderItems(orderItems);
-
-        EntityExchangeResult<OrderResponse> result = webTestClient.post()
+        EntityExchangeResult<OrderDto> result = webTestClient.post()
                 .uri("/api/order/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .body(Mono.just(orderRequest), OrderRequest.class)
+                .body(Mono.just(orderRequest), OrderDto.class)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody(OrderResponse.class)
+                .expectBody(OrderDto.class)
                 .returnResult();
 
-        OrderResponse orderResponse = result.getResponseBody();
+        OrderDto orderResponse = result.getResponseBody();
         Assertions.assertNotNull(orderResponse);
-        Assertions.assertNotNull(orderResponse.getId());
-        Assertions.assertNotNull(orderResponse.getOrderNumber());
-        Assertions.assertEquals(2, orderResponse.getOrderItems().size());
-        Assertions.assertNotNull(orderResponse.getOrderItems().get(0).getId());
-        Assertions.assertNotNull(orderResponse.getOrderItems().get(1).getId());
+        Assertions.assertNotNull(orderResponse.id());
+        Assertions.assertNotNull(orderResponse.orderNumber());
+        Assertions.assertEquals(2, orderResponse.orderItems().size());
+        Assertions.assertNotNull(orderResponse.orderItems().get(0).id());
+        Assertions.assertNotNull(orderResponse.orderItems().get(1).id());
     }
 }

@@ -1,7 +1,7 @@
 package com.shop.inventory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shop.inventory.dto.InventoryRequest;
+import com.shop.inventory.dto.InventoryDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -55,10 +55,7 @@ class InventoryControllerIntegrationTests {
     @Test
     @Order(value = 2)
     void shouldCreateInventory() throws Exception {
-        final InventoryRequest inventoryRequest = InventoryRequest.builder()
-                .skuCode("Test-SkuCode")
-                .quantity(200)
-                .build();
+        final InventoryDto inventoryRequest = new InventoryDto(null, "Test-SkuCode",200, true);
 
         String inventoryRequestString = objectMapper.writeValueAsString(inventoryRequest);
 

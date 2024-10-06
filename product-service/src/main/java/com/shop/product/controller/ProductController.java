@@ -1,7 +1,6 @@
 package com.shop.product.controller;
 
-import com.shop.product.dto.ProductRequest;
-import com.shop.product.dto.ProductResponse;
+import com.shop.product.dto.ProductDto;
 import com.shop.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +20,10 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
         try {
-            log.info("Start to create product: {}", productRequest);
-            final ProductResponse productResponse = productService.createProduct(productRequest);
+            log.info("Start to create product: {}", productDto);
+            final ProductDto productResponse = productService.createProduct(productDto);
             log.info("Product: {} created successfully!", productResponse);
             return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -33,10 +32,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
         try {
             log.info("Start getting all products");
-            List<ProductResponse> products = productService.getAllProducts();
+            List<ProductDto> products = productService.getAllProducts();
             log.info("Found {} products!", products.size());
             if (products.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

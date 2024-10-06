@@ -1,7 +1,6 @@
 package com.shop.order.controller;
 
-import com.shop.order.dto.OrderRequest;
-import com.shop.order.dto.OrderResponse;
+import com.shop.order.dto.OrderDto;
 import com.shop.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +21,11 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderDto> placeOrder(@RequestBody OrderDto orderDto) {
 
         try {
-            log.info("Start to place order: {}", orderRequest);
-            final OrderResponse orderResponse = orderService.placeOrder(orderRequest);
+            log.info("Start to place order: {}", orderDto);
+            final OrderDto orderResponse = orderService.placeOrder(orderDto);
             log.info("Order: {} placed successfully!", orderResponse);
             return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
         } catch (MissingRequestValueException e) {
@@ -46,10 +45,10 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
 
         try {
-            return new ResponseEntity<>(orderService.createOrder(orderRequest), HttpStatus.CREATED);
+            return new ResponseEntity<>(orderService.createOrder(orderDto), HttpStatus.CREATED);
         } catch (IllegalArgumentException | MissingRequestValueException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (WebClientResponseException e) {
@@ -64,9 +63,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getOrderByEmail(@RequestParam(value = "email", required = false) String email, @RequestParam(value = "order-number", required = false) String orderNumber) {
+    public ResponseEntity<List<OrderDto>> getOrderByEmail(@RequestParam(value = "email", required = false) String email, @RequestParam(value = "order-number", required = false) String orderNumber) {
         log.info("Start to get order: {}", email);
-        List<OrderResponse> orderResponses = orderService.getOrder(email, orderNumber);
+        List<OrderDto> orderResponses = orderService.getOrder(email, orderNumber);
         log.info("Found {} Orders!", orderResponses.size());
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }

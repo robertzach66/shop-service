@@ -32,69 +32,69 @@ public class OrderService {
     private final InventoryClient inventoryClient;
     private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
-    public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
-        boolean allProductsAreInStock = orderRequest.getOrderItems().stream()
+    public OrderDto placeOrder(final OrderDto orderDto) throws MissingRequestValueException {
+        boolean allProductsAreInStock = orderDto.orderItems().stream()
                 .allMatch(
-                        orderItemRequest -> {
-                            boolean isInStok = inventoryClient.isInStock(orderItemRequest.getSkuCode(), orderItemRequest.getQuantity());
-                            log.info("{} {} are {}in stock!", orderItemRequest.getQuantity(), orderItemRequest.getSkuCode(), isInStok ? "" : "not ");
+                        orderItemDto -> {
+                            boolean isInStok = inventoryClient.isInStock(orderItemDto.skuCode(), orderItemDto.quantity());
+                            log.info("{} {} are {}in stock!", orderItemDto.quantity(), orderItemDto.skuCode(), isInStok ? "" : "not ");
                             return isInStok;
                         }
                 );
         if (allProductsAreInStock) {
-            return save(orderRequest);
+            return save(orderDto);
         } else {
             throw new IllegalArgumentException("At least one product is not in stock, please try later!");
         }
     }
 
-    public OrderResponse createOrder(OrderRequest orderRequest) throws MissingRequestValueException {
-        List<String> skuCodes = orderRequest.getOrderItems()
+    public OrderDto createOrder(OrderDto orderDto) throws MissingRequestValueException {
+        List<String> skuCodes = orderDto.orderItems()
                 .stream()
-                .map(OrderItemRequest::getSkuCode)
+                .map(OrderItemDto::skuCode)
                 .toList();
 
-        List<InventoryResponse> inventories = inventoryClient.getInventory(skuCodes);
-        boolean allProductsAreInStock = inventories != null && inventories.stream().allMatch(InventoryResponse::isInStock);
+        List<InventoryDto> inventories = inventoryClient.getInventory(skuCodes);
+        boolean allProductsAreInStock = inventories != null && inventories.stream().allMatch(InventoryDto::isInStock);
 
         if (allProductsAreInStock) {
-            return save(orderRequest);
+            return save(orderDto);
         } else {
             throw new IllegalArgumentException("Product is not in stock, please try later!");
         }
     }
 
-    private OrderResponse save(final OrderRequest orderRequest) throws MissingRequestValueException {
+    private OrderDto save(final OrderDto orderRequest) throws MissingRequestValueException {
         Ordering ordering = new Ordering();
         ordering.setOrderNumber(UUID.randomUUID().toString());
         ordering.setOrderDate(LocalDate.now());
-        if (orderRequest.getOrderItems() == null || orderRequest.getOrderItems().isEmpty()) {
+        if (orderRequest.orderItems() == null || orderRequest.orderItems().isEmpty()) {
             throw new MissingRequestValueException("No OrderItems provided!");
         }
-        ordering.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemRequest -> mapItemDtoToItemEntity(ordering, orderItemRequest)).toList());
-        Customer customer = customerRepository.findByEmail(orderRequest.getCustomer().getEmail());
+        ordering.setOrderItems(orderRequest.orderItems().stream().map(orderItemDto -> mapItemDtoToItemEntity(ordering, orderItemDto)).toList());
+        Customer customer = customerRepository.findByEmail(orderRequest.customer().email());
         if (customer == null) {
             customer = new Customer();
             customer.setCustomerNumber(UUID.randomUUID().toString());
-            customer.setEmail(orderRequest.getCustomer().getEmail());
-            customer.setFirstName(orderRequest.getCustomer().getFirstName());
-            customer.setLastName(orderRequest.getCustomer().getLastName());
+            customer.setEmail(orderRequest.customer().email());
+            customer.setFirstName(orderRequest.customer().firstName());
+            customer.setLastName(orderRequest.customer().lastName());
         }
         ordering.setCustomer(customer);
 
-        OrderResponse orderResponse = mapEntityToDto(orderRepository.save(ordering));
+        OrderDto orderResponse = mapEntityToDto(orderRepository.save(ordering));
         notiFyAboutPlacedOrder(orderResponse);
         return orderResponse;
     }
 
-    private void notiFyAboutPlacedOrder(OrderResponse orderResponse) {
-        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderResponse.getOrderNumber(), orderResponse.getCustomer().getEmail());
+    private void notiFyAboutPlacedOrder(OrderDto orderDto) {
+        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderDto.orderNumber(), orderDto.customer().email());
         log.info("Notify Topic: order-placed with: {}", orderPlacedEvent);
         kafkaTemplate.send("order-placed", orderPlacedEvent);
         log.info("Notifyied Topic: order-placed with: {} successfully!", orderPlacedEvent);
     }
 
-    public List<OrderResponse> getOrder(final String email, final String orderNumber) {
+    public List<OrderDto> getOrder(final String email, final String orderNumber) {
         if (orderNumber != null) {
             return List.of(mapEntityToDto(orderRepository.findByOrderNumber(orderNumber)));
         }
@@ -102,45 +102,30 @@ public class OrderService {
         return orderRepository.findByCustomerId(customer.getId()).stream().map(this::mapEntityToDto).toList();
     }
 
-    private OrderItem mapItemDtoToItemEntity(Ordering ordering, final OrderItemRequest orderItemRequest) {
+    private OrderItem mapItemDtoToItemEntity(Ordering ordering, final OrderItemDto orderItemDto) {
         OrderItem orderItem = new OrderItem();
-        orderItem.setQuantity(orderItemRequest.getQuantity());
-        orderItem.setPrice(orderItemRequest.getPrice());
-        orderItem.setSkuCode(orderItemRequest.getSkuCode());
+        orderItem.setQuantity(orderItemDto.quantity());
+        orderItem.setPrice(orderItemDto.price());
+        orderItem.setSkuCode(orderItemDto.skuCode());
         orderItem.setOrdering(ordering);
         return orderItem;
     }
 
-    private OrderResponse mapEntityToDto(final Ordering ordering) {
-        OrderResponse orderResponse = OrderResponse.builder()
-                .id(ordering.getId())
-                .orderNumber(ordering.getOrderNumber())
-                .orderDate(ordering.getOrderDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)))
-                .orderItems(ordering.getOrderItems().stream()
+    private OrderDto mapEntityToDto(final Ordering ordering) {
+        return new OrderDto(ordering.getId(),
+                ordering.getOrderNumber(),
+                ordering.getOrderDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)),
+                ordering.getOrderItems().stream()
                         .map(this::mapItemEntityToItemDto)
-                        .toList())
-                .customer(mapCustomerEntityToDto(ordering.getCustomer()))
-                .build();
-        orderResponse.setOrderDate(ordering.getOrderDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
-        return orderResponse;
+                        .toList(),
+                mapCustomerEntityToDto(ordering.getCustomer()));
     }
 
-    private OrderItemResponse mapItemEntityToItemDto(final OrderItem orderItem) {
-        return OrderItemResponse.builder()
-                .id(orderItem.getId())
-                .skuCode(orderItem.getSkuCode())
-                .quantity(orderItem.getQuantity())
-                .price(orderItem.getPrice())
-                .build();
+    private OrderItemDto mapItemEntityToItemDto(final OrderItem orderItem) {
+        return new OrderItemDto(orderItem.getId(), orderItem.getSkuCode(), orderItem.getPrice(), orderItem.getQuantity());
     }
 
-    private CustomerResponse mapCustomerEntityToDto(final Customer customer) {
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .customerNumber(customer.getCustomerNumber())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .email(customer.getEmail())
-                .build();
+    private CustomerDto mapCustomerEntityToDto(final Customer customer) {
+        return new CustomerDto(customer.getId(), customer.getCustomerNumber(), customer.getFirstName(), customer.getLastName(), customer.getEmail());
     }
 }

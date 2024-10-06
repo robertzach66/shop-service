@@ -1,7 +1,6 @@
 package com.shop.inventory.controller;
 
-import com.shop.inventory.dto.InventoryRequest;
-import com.shop.inventory.dto.InventoryResponse;
+import com.shop.inventory.dto.InventoryDto;
 import com.shop.inventory.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +19,9 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping
-    public ResponseEntity<List<InventoryResponse>> getInventory(@RequestParam("sku-code") List<String> skuCodes) {
+    public ResponseEntity<List<InventoryDto>> getInventory(@RequestParam("sku-code") List<String> skuCodes) {
         try {
-            List<InventoryResponse> inventories = inventoryService.getInventory(skuCodes);
+            List<InventoryDto> inventories = inventoryService.getInventory(skuCodes);
             if (!inventories.isEmpty()) {
                 return new ResponseEntity<>(inventories, HttpStatus.OK);
             } else {
@@ -43,7 +42,7 @@ public class InventoryController {
     }
 
     @PostMapping
-    public ResponseEntity<InventoryResponse> createInventory(@RequestBody InventoryRequest inventoryDto) {
+    public ResponseEntity<InventoryDto> createInventory(@RequestBody InventoryDto inventoryDto) {
         try {
             return new ResponseEntity<>(inventoryService.createInventory(inventoryDto), HttpStatus.CREATED);
         } catch (Exception e) {

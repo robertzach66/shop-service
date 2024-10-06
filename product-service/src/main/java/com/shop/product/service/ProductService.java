@@ -1,7 +1,6 @@
 package com.shop.product.service;
 
-import com.shop.product.dto.ProductRequest;
-import com.shop.product.dto.ProductResponse;
+import com.shop.product.dto.ProductDto;
 import com.shop.product.model.Product;
 import com.shop.product.repository.ProductRepository;
 
@@ -20,14 +19,14 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductResponse createProduct(final ProductRequest productRequest) {
-        Product product = mapDtoToEntity(productRequest);
+    public ProductDto createProduct(final ProductDto productDto) {
+        Product product = mapDtoToEntity(productDto);
         productRepository.save(product);
         log.info("Product: {}-{} created", product.getName(), product.getId());
         return mapEntityToDto(product);
     }
 
-    public List<ProductResponse> getAllProducts() {
+    public List<ProductDto> getAllProducts() {
         List<Product> products = new ArrayList<>();
         try {
             products.addAll(productRepository.findAll());
@@ -37,22 +36,16 @@ public class ProductService {
         return products.stream().map(this::mapEntityToDto).toList();
     }
 
-    private ProductResponse mapEntityToDto(final Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .skuCode(product.getSkuCode())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .build();
+    private ProductDto mapEntityToDto(final Product product) {
+        return new ProductDto(product.getId(), product.getName(), product.getDescription(), product.getSkuCode(), product.getPrice());
     }
 
-    private Product mapDtoToEntity(final ProductRequest productRequest) {
+    private Product mapDtoToEntity(final ProductDto productDto) {
         return Product.builder()
-                .skuCode(productRequest.getSkuCode())
-                .name(productRequest.getName())
-                .description(productRequest.getDescription())
-                .price(productRequest.getPrice())
+                .skuCode(productDto.skuCode())
+                .name(productDto.name())
+                .description(productDto.description())
+                .price(productDto.price())
                 .build();
     }
 }
