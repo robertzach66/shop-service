@@ -65,7 +65,7 @@ export class HomePageComponent implements OnInit {
 
       if (!quantity) {
         this.orderSucces = false;
-        this.orderFailed = false;
+        this.orderFailed = true;
         this.quantityIsNull = true;
       } else {
         this.quantityIsNull = false;
@@ -81,6 +81,7 @@ export class HomePageComponent implements OnInit {
           customer: customer,
         }
 
+        console.log(order);
         this.orderService.orderProduct(order).subscribe({
             next: (order) => {
               this.orderSucces = true;
