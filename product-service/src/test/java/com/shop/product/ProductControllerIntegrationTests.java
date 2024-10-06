@@ -27,7 +27,7 @@ class ProductControllerIntegrationTests extends AbstractPostgresContainerIntegra
     @Test
     @Order(value = 2)
     void shouldCreateProduct() {
-        ProductDto productRequest = new ProductDto(null, "Test-Product-XYZ", "Test-Description-XYZ", "sku-code-123", new BigDecimal(12345));
+        ProductDto productRequest = new ProductDto(null, "Test-Product-XYZ", "Test-Description-XYZ", "test-sku-code-001", new BigDecimal(12345));
 
         webTestClient.post()
                 .uri("/api/product")

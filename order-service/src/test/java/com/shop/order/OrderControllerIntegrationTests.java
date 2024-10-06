@@ -14,7 +14,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -35,8 +34,8 @@ public class OrderControllerIntegrationTests extends AbstractPostgresContainerIn
     @Test
     @Order(value = 2)
     void shouldPlaceOrder() {
-        final OrderItemDto orderItem1 = new OrderItemDto(null, "TestSkucode1", new BigDecimal(111), 5);
-        final OrderItemDto orderItem2 = new OrderItemDto(null, "TestSkucode2", new BigDecimal(222), 2);
+        final OrderItemDto orderItem1 = new OrderItemDto(null, "sku-code-mercedes-001", new BigDecimal(111), 5);
+        final OrderItemDto orderItem2 = new OrderItemDto(null, "sku-code-audi-001", new BigDecimal(222), 2);
         final CustomerDto customerDto = new CustomerDto(null, null, "Robert", "Zach", "robert.zach@live.de");
         final OrderDto orderRequest = new OrderDto(null, null, null, List.of(orderItem1, orderItem2), customerDto);
 
@@ -66,8 +65,8 @@ public class OrderControllerIntegrationTests extends AbstractPostgresContainerIn
     @Test
     @Order(value = 3)
     void shouldCreateOrder() {
-        final OrderItemDto orderItem1 = new OrderItemDto(null, "Mercedes Benz EQE", new BigDecimal(111), 5);
-        final OrderItemDto orderItem2 = new OrderItemDto(null, "Audi Quattro", new BigDecimal(222), 2);
+        final OrderItemDto orderItem1 = new OrderItemDto(null, "sku-code-mercedes-001", new BigDecimal(111), 5);
+        final OrderItemDto orderItem2 = new OrderItemDto(null, "sku-code-audi-001", new BigDecimal(222), 2);
         final CustomerDto customerDto = new CustomerDto(null, null, "Robert", "Zach", "robert.zach@live.de");
         final OrderDto orderRequest = new OrderDto(null, null, null, List.of(orderItem1, orderItem2), customerDto);
 

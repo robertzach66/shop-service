@@ -26,6 +26,7 @@ class ProductRepositoryInegrationTest extends AbstractPostgresContainerIntegrati
         Product testProduct = Product.builder()
                 .name("Test-Product")
                 .description("Test-description")
+                .skuCode("test-sku-code-001")
                 .price(new BigDecimal(4711))
                 .build();
         repository.save(testProduct);

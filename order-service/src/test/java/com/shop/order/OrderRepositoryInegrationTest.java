@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +28,18 @@ class OrderRepositoryInegrationTest extends AbstractPostgresContainerIntegration
 	@Order(value = 2)
 	void shouldCreateOrder() {
 		final Ordering ordering = Ordering.builder().build();
+		ordering.setOrderNumber("xyz-123");
+		ordering.setOrderDate(LocalDate.now());
 		final OrderItem orderItem1 = OrderItem.builder()
 				.skuCode("Test-SkuCode-1")
 				.price(new BigDecimal(111))
+				.quantity(2)
 				.ordering(ordering)
 				.build();
 		final OrderItem orderItem2 = OrderItem.builder()
 				.skuCode("Test-SkuCode-1")
 				.price(new BigDecimal(222))
+				.quantity(3)
 				.ordering(ordering)
 				.build();
 
@@ -45,7 +50,8 @@ class OrderRepositoryInegrationTest extends AbstractPostgresContainerIntegration
 
 		repository.save(ordering);
 		Assertions.assertNotNull(ordering.getId());
-		// Assertions.assertNotNull(ordering.getOrderNumber());
+		Assertions.assertNotNull(ordering.getOrderNumber());
+		Assertions.assertNotNull(ordering.getOrderDate());
 		Assertions.assertEquals(2, ordering.getOrderItems().size());
 		Assertions.assertNotNull(ordering.getOrderItems().get(0));
 		Assertions.assertNotNull(ordering.getOrderItems().get(1));
