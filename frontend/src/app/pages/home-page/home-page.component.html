@@ -39,6 +39,9 @@
             <p class="text-red-500 font-semibold">No products found!</p>
         }
     </div>
+    <div class="flex justify-between items-cnter mb-4">
+        <h1 class="text-2xl font-bold mb-4">My Orders ({{ orders.length }})</h1>
+    </div>
     <div class="p-4">
         @if (orders.length > 0) {
             <ul class="list-disc list-inside">
