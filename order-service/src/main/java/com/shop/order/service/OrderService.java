@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MissingRequestValueException;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,19 +69,23 @@ public class OrderService {
             throw new MissingRequestValueException("No OrderItems provided!");
         }
         ordering.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemRequest -> mapItemDtoToItemEntity(ordering, orderItemRequest)).toList());
-        Customer customer = customerRepository.findByEmail(orderRequest.getCustomerRequest().getEmail());
+        Customer customer = customerRepository.findByEmail(orderRequest.getCustomer().getEmail());
         if (customer == null) {
             customer = new Customer();
             customer.setCustomerNumber(UUID.randomUUID().toString());
-            customer.setEmail(orderRequest.getCustomerRequest().getEmail());
-            customer.setFirstName(orderRequest.getCustomerRequest().getFirstName());
-            customer.setLastName(orderRequest.getCustomerRequest().getLastName());
+            customer.setEmail(orderRequest.getCustomer().getEmail());
+            customer.setFirstName(orderRequest.getCustomer().getFirstName());
+            customer.setLastName(orderRequest.getCustomer().getLastName());
         }
         return mapEntityToDto(orderRepository.save(ordering));
     }
 
-    public OrderResponse getOrder(final String orderNumber) {
-        return mapEntityToDto(orderRepository.findByOrderNumber(orderNumber));
+    public List<OrderResponse> getOrder(final String email, final String orderNumber) {
+        if (orderNumber != null) {
+            return List.of(mapEntityToDto(orderRepository.findByOrderNumber(orderNumber)));
+        }
+        final Customer customer = customerRepository.findByEmail(email);
+        return orderRepository.findByCustomerId(customer.getId()).stream().map(this::mapEntityToDto).toList();
     }
 
     private OrderItem mapItemDtoToItemEntity(Ordering ordering, final OrderItemRequest orderItemRequest) {
@@ -92,14 +98,17 @@ public class OrderService {
     }
 
     private OrderResponse mapEntityToDto(final Ordering ordering) {
-        return OrderResponse.builder()
+        OrderResponse orderResponse = OrderResponse.builder()
                 .id(ordering.getId())
                 .orderNumber(ordering.getOrderNumber())
+                .orderDate(ordering.getOrderDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)))
                 .orderItems(ordering.getOrderItems().stream()
                         .map(this::mapItemEntityToItemDto)
                         .toList())
-                .customerResponse(mapCustomerEntityToDto(ordering.getCustomer()))
+                .customer(mapCustomerEntityToDto(ordering.getCustomer()))
                 .build();
+        orderResponse.setOrderDate(ordering.getOrderDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
+        return orderResponse;
     }
 
     private OrderItemResponse mapItemEntityToItemDto(final OrderItem orderItem) {
@@ -117,6 +126,7 @@ public class OrderService {
                 .customerNumber(customer.getCustomerNumber())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
+                .email(customer.getEmail())
                 .build();
     }
 }

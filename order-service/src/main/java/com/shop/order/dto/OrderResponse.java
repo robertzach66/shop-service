@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -14,6 +15,7 @@ import java.util.List;
 public class OrderResponse {
     private Long id;
     private String orderNumber;
+    private String orderDate;
     private List<OrderItemResponse> orderItems;
-    private CustomerResponse customerResponse;
+    private CustomerResponse customer;
 }

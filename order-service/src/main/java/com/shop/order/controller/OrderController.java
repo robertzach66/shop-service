@@ -11,6 +11,8 @@ import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/order")
 @RequiredArgsConstructor
@@ -59,10 +61,10 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<OrderResponse> getOrder(@RequestParam("order-number") String orderNumber) {
-        log.info("Start to get order: {}", orderNumber);
-        OrderResponse orderResponse = orderService.getOrder(orderNumber);
-        log.info("Found Order: {}!", orderResponse);
-        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+    public ResponseEntity<List<OrderResponse>> getOrderByEmail(@RequestParam(value = "email", required = false) String email, @RequestParam(value = "order-number", required = false) String orderNumber) {
+        log.info("Start to get order: {}", email);
+        List<OrderResponse> orderResponses = orderService.getOrder(email, orderNumber);
+        log.info("Found {} Orders!", orderResponses.size());
+        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 }

@@ -51,7 +51,7 @@ public class Routes {
     public RouterFunction<ServerResponse> orderServiceRoute() {
         log.info(routingConfig.getOrderRoutes().getName());
         return GatewayRouterFunctions.route(routingConfig.getOrderRoutes().getName())
-                .route(RequestPredicates.POST(routingConfig.getOrderRoutes().getPath()),
+                .route(RequestPredicates.path(routingConfig.getOrderRoutes().getPath()),
                         HandlerFunctions.http(routingConfig.getOrderRoutes().getUrl()))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker(routingConfig.getOrderRoutes().getCircuitBreaker(),
                         URI.create(routingConfig.getFallbackRoutes().getUrl())))
