@@ -10,7 +10,6 @@ import com.shop.order.repository.CustomerRepository;
 import com.shop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +31,6 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final InventoryClient inventoryClient;
     private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
-
-    @Value("${spring.kafka.template.defaultTopic}")
-    private final String defaultTopicName;
 
     public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
         boolean allProductsAreInStock = orderRequest.getOrderItems().stream()
@@ -93,9 +89,9 @@ public class OrderService {
 
     private void notiFyAboutPlacedOrder(OrderResponse orderResponse) {
         OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderResponse.getOrderNumber(), orderResponse.getCustomer().getEmail());
-        log.info("Notify Topic: {} with: {}", defaultTopicName, orderPlacedEvent);
-        kafkaTemplate.send(defaultTopicName, orderPlacedEvent);
-        log.info("Notifyied Topic: {} with: {} successfully!", defaultTopicName, orderPlacedEvent);
+        log.info("Notify Topic: order-placed with: {}", orderPlacedEvent);
+        kafkaTemplate.send("order-placed", orderPlacedEvent);
+        log.info("Notifyied Topic: order-placed with: {} successfully!", orderPlacedEvent);
     }
 
     public List<OrderResponse> getOrder(final String email, final String orderNumber) {

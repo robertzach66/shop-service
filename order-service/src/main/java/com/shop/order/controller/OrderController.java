@@ -29,8 +29,10 @@ public class OrderController {
             final OrderResponse orderResponse = orderService.placeOrder(orderRequest);
             log.info("Order: {} placed successfully!", orderResponse);
             return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
-        } catch (IllegalArgumentException | MissingRequestValueException e) {
+        } catch (MissingRequestValueException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (WebClientResponseException e) {
             if (e.getRequest() != null) {
                 log.error("The following uri could not been answerd successfully:");
