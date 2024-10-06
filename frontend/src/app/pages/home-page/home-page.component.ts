@@ -37,9 +37,15 @@ export class HomePageComponent implements OnInit {
         this.productService.getProducts()
           .pipe()
           .subscribe(products => {
-            console.log(products)
             this.products = products;
-          })
+          });
+        this.oidcSecurityService.userData$.subscribe( result => {
+          this.orderService.getOrdersByEmail(result.userData.email)
+            .pipe()
+            .subscribe(orders => {
+              this.orders = orders;
+            });
+          });
       }
     )
   }
@@ -51,8 +57,7 @@ export class HomePageComponent implements OnInit {
   orderProduct(product: Product, quantity: string) {
 
     this.oidcSecurityService.userData$.subscribe( result => {
-      console.log(result);
-      const userDetails = {
+      const customer = {
         email: result.userData.email,
         firstName: result.userData.given_name,
         lastName: result.userData.family_name,
@@ -73,7 +78,7 @@ export class HomePageComponent implements OnInit {
 
         const order: Order = {
           orderItems: [orderItem],
-          userDetails: userDetails,
+          customer: customer,
         }
 
         this.orderService.orderProduct(order).subscribe({
