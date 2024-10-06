@@ -2,6 +2,7 @@ package com.shop.order.service;
 
 import com.shop.order.client.InventoryClient;
 import com.shop.order.dto.*;
+import com.shop.order.event.OrderPlacedEvent;
 import com.shop.order.model.Customer;
 import com.shop.order.model.Ordering;
 import com.shop.order.model.OrderItem;
@@ -9,6 +10,8 @@ import com.shop.order.repository.CustomerRepository;
 import com.shop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MissingRequestValueException;
@@ -28,6 +31,10 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final InventoryClient inventoryClient;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
+
+    @Value("${spring.kafka.template.defaultTopic}")
+    private final String defaultTopicName;
 
     public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
         boolean allProductsAreInStock = orderRequest.getOrderItems().stream()
@@ -78,7 +85,17 @@ public class OrderService {
             customer.setLastName(orderRequest.getCustomer().getLastName());
         }
         ordering.setCustomer(customer);
-        return mapEntityToDto(orderRepository.save(ordering));
+
+        OrderResponse orderResponse = mapEntityToDto(orderRepository.save(ordering));
+        notiFyAboutPlacedOrder(orderResponse);
+        return orderResponse;
+    }
+
+    private void notiFyAboutPlacedOrder(OrderResponse orderResponse) {
+        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderResponse.getOrderNumber(), orderResponse.getCustomer().getEmail());
+        log.info("Notify Topic: {} with: {}", defaultTopicName, orderPlacedEvent);
+        kafkaTemplate.send(defaultTopicName, orderPlacedEvent);
+        log.info("Notifyied Topic: {} with: {} successfully!", defaultTopicName, orderPlacedEvent);
     }
 
     public List<OrderResponse> getOrder(final String email, final String orderNumber) {

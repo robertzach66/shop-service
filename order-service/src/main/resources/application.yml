@@ -20,6 +20,9 @@ spring:
     bootstrap-servers: localhost
     template:
       default-topic: order-placed
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.springframework.kafka.serializer.JsonSerializer
 
 springdoc:
   swagger-ui:
