@@ -77,6 +77,7 @@ public class OrderService {
             customer.setFirstName(orderRequest.getCustomer().getFirstName());
             customer.setLastName(orderRequest.getCustomer().getLastName());
         }
+        ordering.setCustomer(customer);
         return mapEntityToDto(orderRepository.save(ordering));
     }
 
