@@ -16,6 +16,10 @@ spring:
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  kafka:
+    bootstrap-servers: localhost
+    template:
+      default-topic: order-placed
 
 springdoc:
   swagger-ui:

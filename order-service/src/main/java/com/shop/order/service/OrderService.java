@@ -2,8 +2,10 @@ package com.shop.order.service;
 
 import com.shop.order.client.InventoryClient;
 import com.shop.order.dto.*;
+import com.shop.order.model.Customer;
 import com.shop.order.model.Ordering;
 import com.shop.order.model.OrderItem;
+import com.shop.order.repository.CustomerRepository;
 import com.shop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
     private final InventoryClient inventoryClient;
 
     public OrderResponse placeOrder(final OrderRequest orderRequest) throws MissingRequestValueException {
@@ -56,10 +59,6 @@ public class OrderService {
         }
     }
 
-    public OrderResponse getOrder(final String orderNumber) {
-        return mapEntityToDto(orderRepository.findByOrderNumber(orderNumber));
-    }
-
     private OrderResponse save(final OrderRequest orderRequest) throws MissingRequestValueException {
         Ordering ordering = new Ordering();
         ordering.setOrderNumber(UUID.randomUUID().toString());
@@ -68,7 +67,19 @@ public class OrderService {
             throw new MissingRequestValueException("No OrderItems provided!");
         }
         ordering.setOrderItems(orderRequest.getOrderItems().stream().map(orderItemRequest -> mapItemDtoToItemEntity(ordering, orderItemRequest)).toList());
+        Customer customer = customerRepository.findByEmail(orderRequest.getCustomerRequest().getEmail());
+        if (customer == null) {
+            customer = new Customer();
+            customer.setCustomerNumber(UUID.randomUUID().toString());
+            customer.setEmail(orderRequest.getCustomerRequest().getEmail());
+            customer.setFirstName(orderRequest.getCustomerRequest().getFirstName());
+            customer.setLastName(orderRequest.getCustomerRequest().getLastName());
+        }
         return mapEntityToDto(orderRepository.save(ordering));
+    }
+
+    public OrderResponse getOrder(final String orderNumber) {
+        return mapEntityToDto(orderRepository.findByOrderNumber(orderNumber));
     }
 
     private OrderItem mapItemDtoToItemEntity(Ordering ordering, final OrderItemRequest orderItemRequest) {
@@ -80,22 +91,32 @@ public class OrderService {
         return orderItem;
     }
 
-    private OrderResponse mapEntityToDto(Ordering ordering) {
+    private OrderResponse mapEntityToDto(final Ordering ordering) {
         return OrderResponse.builder()
                 .id(ordering.getId())
                 .orderNumber(ordering.getOrderNumber())
                 .orderItems(ordering.getOrderItems().stream()
                         .map(this::mapItemEntityToItemDto)
                         .toList())
+                .customerResponse(mapCustomerEntityToDto(ordering.getCustomer()))
                 .build();
     }
 
-    private OrderItemResponse mapItemEntityToItemDto(OrderItem orderItem) {
+    private OrderItemResponse mapItemEntityToItemDto(final OrderItem orderItem) {
         return OrderItemResponse.builder()
                 .id(orderItem.getId())
                 .skuCode(orderItem.getSkuCode())
                 .quantity(orderItem.getQuantity())
                 .price(orderItem.getPrice())
+                .build();
+    }
+
+    private CustomerResponse mapCustomerEntityToDto(final Customer customer) {
+        return CustomerResponse.builder()
+                .id(customer.getId())
+                .customerNumber(customer.getCustomerNumber())
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
                 .build();
     }
 }

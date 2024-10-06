@@ -3,6 +3,6 @@ CREATE SCHEMA IF NOT EXISTS shop AUTHORIZATION robert;
 CREATE TABLE IF NOT EXISTS shop.INVENTORIES
 (
     id          serial PRIMARY KEY,
-    SKU_CODE    VARCHAR(100),
-    quantity    INTEGER
+    SKU_CODE    VARCHAR(100) NOT NULL,
+    quantity    INTEGER NOT NULL
 );

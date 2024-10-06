@@ -1,18 +1,29 @@
 CREATE SCHEMA IF NOT EXISTS shop AUTHORIZATION robert;
 
+CREATE TABLE IF NOT EXISTS shop.CUSTOMERS
+(
+    id              serial PRIMARY KEY,
+    CUSTOMER_NUMBER VARCHAR(100) NOT NULL CONSTRAINT ux_custumer_number UNIQUE,
+    FIRST_NAME      VARCHAR(100) NOT NULL,
+    LAST_NAME       VARCHAR(100) NOT NULL,
+    EMAIL           VARCHAR(100) NOT NULL CONSTRAINT ux_email UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS shop.ORDERS
 (
     id              serial PRIMARY KEY,
-    ORDER_NUMBER    VARCHAR(100),
-    ORDER_DATE      DATE
+    CUSTOMER_ID     INTEGER,
+    ORDER_NUMBER    VARCHAR(100) NOT NULL CONSTRAINT ux_order_number UNIQUE,
+    ORDER_DATE      DATE NOT NULL,
+    CONSTRAINT fk_customer_orders FOREIGN KEY (CUSTOMER_ID) REFERENCES shop.CUSTOMERS (id)
 );
 
 CREATE TABLE IF NOT EXISTS shop.ORDER_ITEMS
 (
     id          serial PRIMARY KEY,
-    ORDER_ID    integer,
-    SKU_CODE    VARCHAR(100),
-    PRICE       double precision,
-    quantity    INTEGER,
-    CONSTRAINT fk_order FOREIGN KEY (ORDER_ID) REFERENCES shop.ORDERS (id)
+    ORDER_ID    INTEGER,
+    SKU_CODE    VARCHAR(100) NOT NULL ,
+    PRICE       double precision NOT NULL,
+    quantity    INTEGER NOT NULL,
+    CONSTRAINT fk_order_itmes FOREIGN KEY (ORDER_ID) REFERENCES shop.ORDERS (id)
 );

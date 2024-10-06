@@ -3,7 +3,7 @@ export interface Order {
     orderNumber?: string;
     orderDate?: string;
     orderItems: Array<OrderItem>;
-    userDetails: UserDetails;
+    customer: Customer;
 }
 
 export interface OrderItem {
@@ -13,7 +13,7 @@ export interface OrderItem {
     quantity: number;
 }
 
-export interface UserDetails {
+export interface Customer {
     email: string;
     firstName: string;
     lastName: string;
