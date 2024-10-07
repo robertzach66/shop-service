@@ -17,10 +17,11 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   kafka:
-    bootstrap-servers: localhost:9092
     template:
       default-topic: order-placed
     producer:
+      acks: -1
+      bootstrap-servers: localhost:29092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 

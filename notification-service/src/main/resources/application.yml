@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: notification-service
+  kafka:
+    bootstrap-servers: localhost:9200
+    consumer:
+      group-id: notificationService
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  mail:
+    host: x
+    port: 1
+    username: x
+    password: y

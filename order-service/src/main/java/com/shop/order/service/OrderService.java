@@ -11,6 +11,7 @@ import com.shop.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MissingRequestValueException;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -90,8 +92,8 @@ public class OrderService {
     private void notiFyAboutPlacedOrder(OrderDto orderDto) {
         OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderDto.orderNumber(), orderDto.customer().email());
         log.info("Notify Topic: order-placed with: {}", orderPlacedEvent);
-        kafkaTemplate.send("order-placed", orderPlacedEvent);
-        log.info("Notifyied Topic: order-placed with: {} successfully!", orderPlacedEvent);
+        CompletableFuture<SendResult<String, OrderPlacedEvent>> sr = kafkaTemplate.send("order-placed", orderPlacedEvent.getOrderNumber(), orderPlacedEvent);
+        log.info("Notifyied Topic: order-placed with: {} successfully! SendResult: {}", orderPlacedEvent, sr.toString());
     }
 
     public List<OrderDto> getOrder(final String email, final String orderNumber) {
