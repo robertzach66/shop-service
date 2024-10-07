@@ -1,4 +1,4 @@
-package com.shop.notification.event;
+package com.shop.order.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
