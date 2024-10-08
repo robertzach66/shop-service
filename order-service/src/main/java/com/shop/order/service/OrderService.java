@@ -32,7 +32,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final InventoryClient inventoryClient;
-    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
+    private final KafkaTemplate<CharSequence, OrderPlacedEvent> kafkaTemplate;
 
     public OrderDto placeOrder(final OrderDto orderDto) throws MissingRequestValueException {
         boolean allProductsAreInStock = orderDto.orderItems().stream()
@@ -92,7 +92,7 @@ public class OrderService {
     private void notiFyAboutPlacedOrder(OrderDto orderDto) {
         OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderDto.orderNumber(), orderDto.customer().email(), orderDto.customer().firstName(), orderDto.customer().lastName());
         log.info("Notify Topic: order-placed with: {}", orderPlacedEvent);
-        CompletableFuture<SendResult<String, OrderPlacedEvent>> sr = kafkaTemplate.send("order-placed", orderPlacedEvent.getOrderNumber(), orderPlacedEvent);
+        CompletableFuture<SendResult<CharSequence, OrderPlacedEvent>> sr = kafkaTemplate.send("order-placed", orderPlacedEvent);
         log.info("Notifyied Topic: order-placed with: {} successfully! SendResult: {}", orderPlacedEvent, sr.toString());
     }
 

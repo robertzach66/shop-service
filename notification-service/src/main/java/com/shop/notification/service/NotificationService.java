@@ -23,7 +23,7 @@ public class NotificationService {
         MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("info@shop.com");
-            messageHelper.setTo(orderPlacedEvent.getEmail());
+            messageHelper.setTo(orderPlacedEvent.getEmail().toString());
             messageHelper.setSubject(String.format("Order %s placed successfully!", orderPlacedEvent.getOrderNumber()));
             messageHelper.setText(String.format("""
                     Hi %s %s,
@@ -32,7 +32,7 @@ public class NotificationService {
                     
                     Best Regards
                     Your shop.com Team
-                    """, orderPlacedEvent.getFirstName(), orderPlacedEvent.getLastName(), orderPlacedEvent.getOrderNumber()
+                    """, orderPlacedEvent.getFirstName().toString(), orderPlacedEvent.getLastName().toString(), orderPlacedEvent.getOrderNumber().toString()
             ));
         };
         try {

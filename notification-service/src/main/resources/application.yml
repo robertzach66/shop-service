@@ -9,14 +9,24 @@ spring:
     consumer:
       group-id: notificationService
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
-        spring:
-          json:
-            type:
-              mapping: event:com.shop.order.event.OrderPlacedEvent
+        schema:
+          registry:
+            url: http://127.0.0.1:8089
+        specific:
+          avro:
+            reader: true
   mail:
     host: sandbox.smtp.mailtrap.io
     port: 2525
     username: ae21545a5dfaa0
     password: bf7cc2a1e2772e
+
+#  Without avro: copy this over the above:
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring:
+#          json:
+#            type:
+#              mapping: event:com.shop.order.event.OrderPlacedEvent
