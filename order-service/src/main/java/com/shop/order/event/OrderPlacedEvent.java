@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class OrderPlacedEvent {
     private String orderNumber;
     private String email;
+    private String firstName;
+    private String lastName;
 }

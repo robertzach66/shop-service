@@ -90,7 +90,7 @@ public class OrderService {
     }
 
     private void notiFyAboutPlacedOrder(OrderDto orderDto) {
-        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderDto.orderNumber(), orderDto.customer().email());
+        OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(orderDto.orderNumber(), orderDto.customer().email(), orderDto.customer().firstName(), orderDto.customer().lastName());
         log.info("Notify Topic: order-placed with: {}", orderPlacedEvent);
         CompletableFuture<SendResult<String, OrderPlacedEvent>> sr = kafkaTemplate.send("order-placed", orderPlacedEvent.getOrderNumber(), orderPlacedEvent);
         log.info("Notifyied Topic: order-placed with: {} successfully! SendResult: {}", orderPlacedEvent, sr.toString());
