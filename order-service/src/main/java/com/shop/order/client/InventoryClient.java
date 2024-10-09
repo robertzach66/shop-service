@@ -24,12 +24,12 @@ public interface InventoryClient {
     List<InventoryDto> getInventory(@RequestParam("sku-code") List<String> skuCodes);
 
     default boolean inInStockFallback(String skuCode, Integer quantity, Throwable throwable) {
-        log.info("Cannot get {} of skuCode: {}, failure reason: {}", quantity, skuCode, throwable.getMessage());
+        log.info("Cannot get {} of skuCode: {}. Failure reason: {}", quantity, skuCode, throwable.getMessage(), throwable);
         return false;
     }
 
     default List<InventoryDto>  getInventoryFallback(String skuCode, Throwable throwable) {
-        log.info("Cannot get skuCode: {}, failure reason: {}", skuCode, throwable.getMessage());
+        log.info("Cannot get skuCode: {}, failure reason: {}", skuCode, throwable.getMessage(), throwable);
         return Collections.emptyList();
     }
 }
