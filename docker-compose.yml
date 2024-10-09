@@ -1,4 +1,21 @@
 services:
+
+  loki:
+    image: grafana/loki:main
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - 3100:3100
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --enable-feature:exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - 9090:9090
+
   db:
     container_name: postgres-shopdb
     image: postgres:alpine
@@ -7,9 +24,10 @@ services:
       - POSTGRES_USER=robert
       - POSTGRES_PASSWORD=postgreSQL66
     ports:
-      - '5432:5432'
+      - 5432:5432
     volumes: 
       - db:/var/lib/postgresql/data
+
 volumes:
   db:
     driver: local
