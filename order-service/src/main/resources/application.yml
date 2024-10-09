@@ -48,6 +48,18 @@ management:
   health:
     circuitbreakers:
       enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true
+  observations:
+    key-values:
+      application: order-service
+  tracing:
+    sampling:
+      probability: 1.0
 
 # Resilience4j Properties
 resilience4j:

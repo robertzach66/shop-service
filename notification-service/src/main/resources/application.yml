@@ -30,3 +30,21 @@ spring:
 #          json:
 #            type:
 #              mapping: event:com.shop.order.event.OrderPlacedEvent
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true
+  observations:
+    key-values:
+      application: product-service
+  tracing:
+    sampling:
+      probability: 1.0
