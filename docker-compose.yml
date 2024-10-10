@@ -16,6 +16,27 @@ services:
     ports:
       - 9090:9090
 
+  tempo:
+    image: grafana/tempo:2.6.0
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/tempo/tempo.yml:/ets/tempo.tempo.yaml:ro
+      - ./docker/tempo/tempo-data:/tmp/tempo
+    ports:
+      - 3110:3100
+      - 9422:9411
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    volumes:
+      - ./docker/grafana:/etc/grafana/provisioning/datasource:ro
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - 3000:3000
+
   db:
     container_name: postgres-shopdb
     image: postgres:alpine
