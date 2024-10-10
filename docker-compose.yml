@@ -2,14 +2,16 @@ services:
 
   loki:
     image: grafana/loki:main
+    container_name: loki
     command: [ "-config.file=/etc/loki/local-config.yaml" ]
     ports:
       - 3100:3100
 
   prometheus:
     image: prom/prometheus:v2.54.1
+    container_name: prometheus
     command:
-      - --enable-feature:exemplar-storage
+      - --enable-feature=exemplar-storage
       - --config.file=/etc/prometheus/prometheus.yml
     volumes:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -18,16 +20,18 @@ services:
 
   tempo:
     image: grafana/tempo:2.6.0
+    container_name: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./docker/tempo/tempo.yml:/ets/tempo.tempo.yaml:ro
-      - ./docker/tempo/tempo-data:/tmp/tempo
+      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
+      - ./data/tempo/:/tmp/tempo
     ports:
       - 3110:3100
-      - 9422:9411
+      - 9411:9411
 
   grafana:
     image: grafana/grafana:11.2.2
+    container_name: grafana
     volumes:
       - ./docker/grafana:/etc/grafana/provisioning/datasource:ro
     environment:
@@ -46,7 +50,7 @@ services:
       - POSTGRES_PASSWORD=postgreSQL66
     ports:
       - 5432:5432
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
 
 volumes:
