@@ -12,7 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 @RequiredArgsConstructor
 public class ObservationConfig {
 
-    private KafkaTemplate kafkaTemplate;
+    private final KafkaTemplate kafkaTemplate;
 
     @PostConstruct
     public void setObservationForKafka() {

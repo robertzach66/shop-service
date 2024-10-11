@@ -17,6 +17,7 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   kafka:
+    bootstrap-servers: localhost:29092
     template:
       default-topic: order-placed
     producer:
@@ -83,3 +84,6 @@ resilience4j:
     instances:
       inventory:
         timeout-duration: 3s
+
+loki:
+  url: http://localhost:3100/loki/api/v1/push
